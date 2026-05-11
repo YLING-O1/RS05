@@ -94,7 +94,7 @@ void MIT_CAN_Tx_Data_Set_Operation_Mode_Packet(uint8_t F_CMD, Motor_Manage_Objec
 }
 
 //命令7：修改电机CANID的8位数据包打包，F_CMD为电机预设ID
-void MIT_AN_Tx_Data_Modify_Motor_CAN_ID_Packet(uint8_t F_CMD, Motor_Manage_Object *RS05_Manage_Object)
+void MIT_CAN_Tx_Data_Modify_Motor_CAN_ID_Packet(uint8_t F_CMD, Motor_Manage_Object *RS05_Manage_Object)
 {
     RS05_Manage_Object->CAN_Tx_Data[0] = 0xFF;
     RS05_Manage_Object->CAN_Tx_Data[1] = 0xFF;
@@ -107,7 +107,7 @@ void MIT_AN_Tx_Data_Modify_Motor_CAN_ID_Packet(uint8_t F_CMD, Motor_Manage_Objec
 }
 
 //命令8：更改通信协议（重新上电生效）的8位数据包打包，F_CMD为电机协议类型，0为私有协议（默认），1为CANopen协议，2为MIT协议
-void MIT_AN_Tx_Data_Change_Communication_Protocol_Packet(uint8_t F_CMD, Motor_Manage_Object *RS05_Manage_Object)
+void MIT_CAN_Tx_Data_Change_Communication_Protocol_Packet(uint8_t F_CMD, Motor_Manage_Object *RS05_Manage_Object)
 {
     RS05_Manage_Object->CAN_Tx_Data[0] = 0xFF;
     RS05_Manage_Object->CAN_Tx_Data[1] = 0xFF;
