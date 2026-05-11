@@ -49,7 +49,7 @@
 
 /* USER CODE BEGIN PV */
 
-extern uint8_t CAN_Tx_Data[8];
+
 
 /* USER CODE END PV */
 

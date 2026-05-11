@@ -35,8 +35,6 @@ enable_language(C ASM)
 add_executable(${CMAKE_PROJECT_NAME}
         HLY/Inc/drv_RS05.h
         HLY/Src/drv_RS05.c
-        HLY/Inc/RS05_math.h
-        HLY/Src/RS05_math.c
         HLY/Inc/MIT_RS05.h
         HLY/Src/MIT_RS05.c
         HLY/Inc/RS05_common.h
@@ -55,7 +53,6 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
         HLY/Src/drv_RS05.c
-        HLY/Src/RS05_math.c
         HLY/Src/MIT_RS05.c
 )
 

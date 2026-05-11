@@ -36,22 +36,21 @@ void MIT_CAN_Tx_Data_MIT_Dynamic_Parameters_Packet(float Target_Angle, float Tar
                                                float Send_Kp, float Send_Kd, float Target_Torque,
                                                Motor_Manage_Object *RS05_Manage_Object)
 {
-    //float转换为uint16_t
-    uint16_t angle_uint  = float_to_uint(Target_Angle,  -4 * PI, 4 * PI, 16);
-    uint16_t omega_uint  = float_to_uint(Target_Omega,  -50.0f,  50.0f,  12);
-    uint16_t kp_uint     = float_to_uint(Send_Kp,       0.0f,    500.0f, 12);
-    uint16_t kd_uint     = float_to_uint(Send_Kd,       0.0f,    5.0f,   12);
-    uint16_t torque_uint = float_to_uint(Target_Torque, -5.5f,   5.5f,   12);
+    Float_Uint_TypeDef angle_uint  = {.f = Target_Angle};
+    Float_Uint_TypeDef omega_uint  = {.f = Target_Omega};
+    Float_Uint_TypeDef kp_uint     = {.f = Send_Kp};
+    Float_Uint_TypeDef kd_uint     = {.f = Send_Kd};
+    Float_Uint_TypeDef torque_uint = {.f = Target_Torque};
 
     //大端模式
-    RS05_Manage_Object->CAN_Tx_Data[0] = (angle_uint & 0xFF00) >> 8;
-    RS05_Manage_Object->CAN_Tx_Data[1] = angle_uint & 0xFF;
-    RS05_Manage_Object->CAN_Tx_Data[2] = (omega_uint & 0xFF0) >> 4;
-    RS05_Manage_Object->CAN_Tx_Data[3] = ((omega_uint & 0xF) << 4) | ((kp_uint & 0xF00) >> 8);
-    RS05_Manage_Object->CAN_Tx_Data[4] = kp_uint & 0xFF;
-    RS05_Manage_Object->CAN_Tx_Data[5] = (kd_uint & 0xFF0) >> 4;
-    RS05_Manage_Object->CAN_Tx_Data[6] = ((kd_uint & 0xF) << 4) | ((torque_uint & 0xF00) >> 8);
-    RS05_Manage_Object->CAN_Tx_Data[7] = torque_uint & 0xFF;
+    RS05_Manage_Object->CAN_Tx_Data[0] = (angle_uint.u & 0xFF00) >> 8;
+    RS05_Manage_Object->CAN_Tx_Data[1] = angle_uint.u & 0xFF;
+    RS05_Manage_Object->CAN_Tx_Data[2] = (omega_uint.u & 0xFF0) >> 4;
+    RS05_Manage_Object->CAN_Tx_Data[3] = ((omega_uint.u & 0xF) << 4) | ((kp_uint.u & 0xF00) >> 8);
+    RS05_Manage_Object->CAN_Tx_Data[4] = kp_uint.u & 0xFF;
+    RS05_Manage_Object->CAN_Tx_Data[5] = (kd_uint.u & 0xFF0) >> 4;
+    RS05_Manage_Object->CAN_Tx_Data[6] = ((kd_uint.u & 0xF) << 4) | ((torque_uint.u & 0xF00) >> 8);
+    RS05_Manage_Object->CAN_Tx_Data[7] = torque_uint.u & 0xFF;
 }
 
 //命令4：设置零点（非位置模式）的8位数据包打包
@@ -67,7 +66,7 @@ void MIT_CAN_Tx_Data_Set_Zero_Position_Packet(Motor_Manage_Object *RS05_Manage_O
     RS05_Manage_Object->CAN_Tx_Data[7] = 0xFE;
 }
 
-//命令5：清楚错误并读取故障状态的8位数据包打包,清除电机报错时，F_CMD置0xFF；查询电机当前的故障代码时，F_CMD置0x00
+//命令5：清处错误并读取故障状态的8位数据包打包,清除电机报错时，F_CMD置0xFF；查询电机当前的故障代码时，F_CMD置0x00
 void MIT_CAN_Tx_Data_Clear_Errors_And_Read_Fault_Status_Packet(uint8_t F_CMD, Motor_Manage_Object *RS05_Manage_Object)
 {
     RS05_Manage_Object->CAN_Tx_Data[0] = 0xFF;
@@ -136,34 +135,34 @@ void MIT_CAN_Tx_Data_Modify_Host_CAN_ID_Packet(uint8_t F_CMD, Motor_Manage_Objec
 void MIT_CAN_Tx_Data_Position_Mode_Control_Packet(float Target_Position, float Target_Speed,
                                               Motor_Manage_Object *RS05_Manage_Object)
 {
-    uint32_t Position = float_to_uint(Target_Position, -4 * PI, 4 * PI, 32);
-    uint32_t Speed = float_to_uint(Target_Speed, -50.0f, 50.0f, 32);
+    Float_Uint_TypeDef Position = {.f = Target_Position};
+    Float_Uint_TypeDef Speed = {.f = Target_Speed};
 
-    RS05_Manage_Object->CAN_Tx_Data[0] = (Position & 0xFF000000) >> 24;
-    RS05_Manage_Object->CAN_Tx_Data[1] = (Position & 0xFF0000) >> 16;
-    RS05_Manage_Object->CAN_Tx_Data[2] = (Position & 0xFF00) >> 8;
-    RS05_Manage_Object->CAN_Tx_Data[3] = (Position & 0xFF);
-    RS05_Manage_Object->CAN_Tx_Data[4] = (Speed & 0xFF000000) >> 24;
-    RS05_Manage_Object->CAN_Tx_Data[5] = (Speed & 0xFF0000) >> 16;
-    RS05_Manage_Object->CAN_Tx_Data[6] = (Speed & 0xFF00) >> 8;
-    RS05_Manage_Object->CAN_Tx_Data[7] = (Speed & 0xFF);
+    RS05_Manage_Object->CAN_Tx_Data[0] = (Position.u & 0xFF000000) >> 24;
+    RS05_Manage_Object->CAN_Tx_Data[1] = (Position.u & 0xFF0000) >> 16;
+    RS05_Manage_Object->CAN_Tx_Data[2] = (Position.u & 0xFF00) >> 8;
+    RS05_Manage_Object->CAN_Tx_Data[3] = (Position.u & 0xFF);
+    RS05_Manage_Object->CAN_Tx_Data[4] = (Speed.u & 0xFF000000) >> 24;
+    RS05_Manage_Object->CAN_Tx_Data[5] = (Speed.u & 0xFF0000) >> 16;
+    RS05_Manage_Object->CAN_Tx_Data[6] = (Speed.u & 0xFF00) >> 8;
+    RS05_Manage_Object->CAN_Tx_Data[7] = (Speed.u & 0xFF);
 }
 
 //命令11：速度模式控制命令的8位数据包打包参数为目标速度（rad/s），电流限制（A）
 void MIT_CAN_Tx_Data_Velocity_Mode_Control_Packet(float Target_Speed, float Current_Limit,
                                               Motor_Manage_Object *RS05_Manage_Object )
 {
-    uint32_t Speed = float_to_uint(Target_Speed, -50.0f, 50.0f, 32);
-    uint32_t Limit = float_to_uint(Current_Limit, -11.0f, 11.0f, 32);
+    Float_Uint_TypeDef Speed = {.f = Target_Speed};
+    Float_Uint_TypeDef Limit = {.f = Current_Limit};
 
-    RS05_Manage_Object->CAN_Tx_Data[0] = (Speed & 0xFF000000) >> 24;
-    RS05_Manage_Object->CAN_Tx_Data[1] = (Speed & 0xFF0000) >> 16;
-    RS05_Manage_Object->CAN_Tx_Data[2] = (Speed & 0xFF00) >> 8;
-    RS05_Manage_Object->CAN_Tx_Data[3] = (Speed & 0xFF);
-    RS05_Manage_Object->CAN_Tx_Data[4] = (Limit & 0xFF000000) >> 24;
-    RS05_Manage_Object->CAN_Tx_Data[5] = (Limit & 0xFF0000) >> 16;
-    RS05_Manage_Object->CAN_Tx_Data[6] = (Limit & 0xFF00) >> 8;
-    RS05_Manage_Object->CAN_Tx_Data[7] = (Limit & 0xFF);
+    RS05_Manage_Object->CAN_Tx_Data[0] = (Speed.u & 0xFF000000) >> 24;
+    RS05_Manage_Object->CAN_Tx_Data[1] = (Speed.u & 0xFF0000) >> 16;
+    RS05_Manage_Object->CAN_Tx_Data[2] = (Speed.u & 0xFF00) >> 8;
+    RS05_Manage_Object->CAN_Tx_Data[3] = (Speed.u & 0xFF);
+    RS05_Manage_Object->CAN_Tx_Data[4] = (Limit.u & 0xFF000000) >> 24;
+    RS05_Manage_Object->CAN_Tx_Data[5] = (Limit.u & 0xFF0000) >> 16;
+    RS05_Manage_Object->CAN_Tx_Data[6] = (Limit.u & 0xFF00) >> 8;
+    RS05_Manage_Object->CAN_Tx_Data[7] = (Limit.u & 0xFF);
 }
 
 //命令12：电机数据保存

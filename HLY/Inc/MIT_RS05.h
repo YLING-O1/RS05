@@ -6,7 +6,6 @@
 #define RS05_MIT_RS05_H
 
 #include "stm32f4xx_hal.h"
-#include "RS05_math.h"
 #include "RS05_common.h"
 
 #define PI 3.14159265358979323846f

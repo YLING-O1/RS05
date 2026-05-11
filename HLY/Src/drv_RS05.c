@@ -22,21 +22,20 @@ void CAN_Tx_Data_Get_Device_ID_Packet(Motor_Manage_Object *RS05_Manage_Object)
 void CAN_Tx_Data_Operation_Control_Packet(float Target_Angle, float Target_Omega, float Send_Kp, float Send_Kd,
                                           Motor_Manage_Object *RS05_Manage_Object)
 {
-    //float转换为uint16_t
-    uint16_t angle_uint  = float_to_uint(Target_Angle,  -4 * PI, 4 * PI, 16);
-    uint16_t omega_uint  = float_to_uint(Target_Omega,  -50.0f,  50.0f,  16);
-    uint16_t kp_uint     = float_to_uint(Send_Kp,       0.0f,    500.0f, 16);
-    uint16_t kd_uint     = float_to_uint(Send_Kd,       0.0f,    5.0f,   16);
+    Float_Uint_TypeDef angle_uint  = {.f = Target_Angle};
+    Float_Uint_TypeDef omega_uint  = {.f = Target_Omega};
+    Float_Uint_TypeDef kp_uint     = {.f = Send_Kp};
+    Float_Uint_TypeDef kd_uint     = {.f = Send_Kd};
 
     //大端模式
-    RS05_Manage_Object->CAN_Tx_Data[0] = (angle_uint & 0xFF00) >> 8;
-    RS05_Manage_Object->CAN_Tx_Data[1] = angle_uint & 0xFF;
-    RS05_Manage_Object->CAN_Tx_Data[2] = (omega_uint & 0xFF00) >> 8;
-    RS05_Manage_Object->CAN_Tx_Data[3] = omega_uint & 0xFF;
-    RS05_Manage_Object->CAN_Tx_Data[4] = (kp_uint & 0xFF00) >> 8;
-    RS05_Manage_Object->CAN_Tx_Data[5] = kp_uint & 0xFF;
-    RS05_Manage_Object->CAN_Tx_Data[6] = (kd_uint & 0xFF00) >> 8;
-    RS05_Manage_Object->CAN_Tx_Data[7] = kd_uint & 0xFF;
+    RS05_Manage_Object->CAN_Tx_Data[0] = (angle_uint.u & 0xFF00) >> 8;
+    RS05_Manage_Object->CAN_Tx_Data[1] = angle_uint.u & 0xFF;
+    RS05_Manage_Object->CAN_Tx_Data[2] = (omega_uint.u & 0xFF00) >> 8;
+    RS05_Manage_Object->CAN_Tx_Data[3] = omega_uint.u & 0xFF;
+    RS05_Manage_Object->CAN_Tx_Data[4] = (kp_uint.u & 0xFF00) >> 8;
+    RS05_Manage_Object->CAN_Tx_Data[5] = kp_uint.u & 0xFF;
+    RS05_Manage_Object->CAN_Tx_Data[6] = (kd_uint.u & 0xFF00) >> 8;
+    RS05_Manage_Object->CAN_Tx_Data[7] = kd_uint.u & 0xFF;
 }
 
 //通信类型3：电机使能运行的8字节数据包打包
@@ -161,7 +160,7 @@ void CAN_Tx_Data_Motor_Protocol_Modification_Packet(uint8_t F_CMD, Motor_Manage_
 void CAN_Tx_Data_Version_Number_Read_Packet(Motor_Manage_Object *RS05_Manage_Object)
 {
     RS05_Manage_Object->CAN_Tx_Data[0] = 0x00;
-    RS05_Manage_Object->CAN_Tx_Data[1] = 0xC4;;
+    RS05_Manage_Object->CAN_Tx_Data[1] = 0xC4;
     RS05_Manage_Object->CAN_Tx_Data[2] = 0;
     RS05_Manage_Object->CAN_Tx_Data[3] = 0;
     RS05_Manage_Object->CAN_Tx_Data[4] = 0;
@@ -424,8 +423,8 @@ void Operation_Control_Mode(CAN_HandleTypeDef *hcan, float Target_Torque, float 
     CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
 
     //发送运控模式电机控制指令（通信类型 1）
-    uint32_t Torque = float_to_uint(Target_Torque, -5.5f, 5.5f, 16);
-    ID = Operation_Control_ID(Torque, RS05_Manage_Object);
+    Float_Uint_TypeDef Torque = {.f = Target_Torque};
+    ID = Operation_Control_ID((uint16_t)Torque.u, RS05_Manage_Object);
     CAN_Tx_Data_Operation_Control_Packet(Target_Angle, Target_Omega, Send_Kp, Send_Kd, RS05_Manage_Object);
     CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
 
@@ -448,8 +447,8 @@ void Current_Mode(CAN_HandleTypeDef *hcan, float iq_ref, Motor_Manage_Object* RS
 
     //再次发送单参数写入指令（通信类型 18）,设置 iq_ref 参数为你想要设定的目标电流指令值
     ID = Single_Parameter_Write_ID(RS05_Manage_Object);
-    uint32_t Iq_ref = float_to_uint(iq_ref, -16.0f, 16.0f, 32);
-    CAN_Tx_Data_Single_Parameter_Write_Packet(0x7006, Iq_ref, RS05_Manage_Object);
+    Float_Uint_TypeDef Iq_ref = {.f = iq_ref};
+    CAN_Tx_Data_Single_Parameter_Write_Packet(0x7006, Iq_ref.u, RS05_Manage_Object);
     CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
 }
 
@@ -469,20 +468,20 @@ void Velocity_Mode(CAN_HandleTypeDef *hcan, float limit_cur, float acc_rad, floa
 
     //发送电机模式参数写入指令（通信类型 18），将 limit_cur（电流限制）参数设置为默认的最大电流指令16
     ID = Single_Parameter_Write_ID(RS05_Manage_Object);
-    uint32_t Limit_cur = float_to_uint(limit_cur, 0.0f, 16.0f, 32);
-    CAN_Tx_Data_Single_Parameter_Write_Packet(0x7018, Limit_cur, RS05_Manage_Object);
+    Float_Uint_TypeDef Limit_cur = {.f = limit_cur};
+    CAN_Tx_Data_Single_Parameter_Write_Packet(0x7018, Limit_cur.u, RS05_Manage_Object);
     CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
 
     //发送电机模式参数写入指令（通信类型 18），将 acc_rad（加速度）参数设置为默认的加速度指令20
     ID = Single_Parameter_Write_ID(RS05_Manage_Object);
-    uint32_t Acc_rad = float_to_uint(acc_rad, 0.0f, 150.0f, 32);
-    CAN_Tx_Data_Single_Parameter_Write_Packet(0x7022, Acc_rad, RS05_Manage_Object);
+    Float_Uint_TypeDef Acc_rad = {.f = acc_rad};
+    CAN_Tx_Data_Single_Parameter_Write_Packet(0x7022, Acc_rad.u, RS05_Manage_Object);
     CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
 
     //发送电机模式参数写入指令（通信类型 18），将 spd_ref（目标速度）参数设置为默认的速度指令,手册没说
     ID = Single_Parameter_Write_ID(RS05_Manage_Object);
-    uint32_t Spd_ref = float_to_uint(spd_ref, -33.0f, 33.0f, 32);
-    CAN_Tx_Data_Single_Parameter_Write_Packet(0x700A, Spd_ref, RS05_Manage_Object);
+    Float_Uint_TypeDef Spd_ref = {.f = spd_ref};
+    CAN_Tx_Data_Single_Parameter_Write_Packet(0x700A, Spd_ref.u, RS05_Manage_Object);
     CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
 }
 
@@ -502,14 +501,14 @@ void Location_Mode_CSP(CAN_HandleTypeDef *hcan, float limit_spd, float loc_ref,
 
     //发送电机模式参数写入指令（通信类型 18），将 limit_spd（速度限制）参数设置为默认的最大速度指令
     ID = Single_Parameter_Write_ID(RS05_Manage_Object);
-    uint32_t Limit_spd = float_to_uint(limit_spd, 0.0f, 33.0f, 32);
-    CAN_Tx_Data_Single_Parameter_Write_Packet(0x7017, Limit_spd, RS05_Manage_Object);
+    Float_Uint_TypeDef Limit_spd = {.f = limit_spd};
+    CAN_Tx_Data_Single_Parameter_Write_Packet(0x7017, Limit_spd.u, RS05_Manage_Object);
     CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
 
     //发送电机模式参数写入指令（通信类型 18），将 loc_ref（目标位置）参数设置为默认的位置指令,手册没说
     ID = Single_Parameter_Write_ID(RS05_Manage_Object);
-    uint32_t Loc_ref = float_to_uint(loc_ref, -4 * PI, 4 * PI, 32);
-    CAN_Tx_Data_Single_Parameter_Write_Packet(0x7016, Loc_ref, RS05_Manage_Object);
+    Float_Uint_TypeDef Loc_ref_CSP = {.f = loc_ref};
+    CAN_Tx_Data_Single_Parameter_Write_Packet(0x7016, Loc_ref_CSP.u, RS05_Manage_Object);
     CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
 }
 
@@ -529,20 +528,20 @@ void Location_Mode_PP(CAN_HandleTypeDef *hcan, float vel_max, float acc_set, flo
 
     //发送电机模式参数写入指令（通信类型 18），将 vel_max 参数设置为默认的最大速度指令10
     ID = Single_Parameter_Write_ID(RS05_Manage_Object);
-    uint32_t Vel_max = float_to_uint(vel_max, 0.0f, 20.0f, 32);
-    CAN_Tx_Data_Single_Parameter_Write_Packet(0x7024, Vel_max, RS05_Manage_Object);
+    Float_Uint_TypeDef Vel_max = {.f = vel_max};
+    CAN_Tx_Data_Single_Parameter_Write_Packet(0x7024, Vel_max.u, RS05_Manage_Object);
     CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
 
     //发送电机模式参数写入指令（通信类型 18），将 acc_set 参数设置为默认的加速度指令10
     ID = Single_Parameter_Write_ID(RS05_Manage_Object);
-    uint32_t Acc_set = float_to_uint(acc_set, 0.0f, 1000.0f, 32);
-    CAN_Tx_Data_Single_Parameter_Write_Packet(0x7025, Acc_set, RS05_Manage_Object);
+    Float_Uint_TypeDef Acc_set = {.f = acc_set};
+    CAN_Tx_Data_Single_Parameter_Write_Packet(0x7025, Acc_set.u, RS05_Manage_Object);
     CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
 
     //发送电机模式参数写入指令（通信类型 18），将 loc_ref 参数设置为默认的位置指令
     ID = Single_Parameter_Write_ID(RS05_Manage_Object);
-    uint32_t Loc_ref = float_to_uint(loc_ref, -4 * PI, 4 * PI, 32);
-    CAN_Tx_Data_Single_Parameter_Write_Packet(0x7016, Loc_ref, RS05_Manage_Object);
+    Float_Uint_TypeDef Loc_ref_PP = {.f = loc_ref};
+    CAN_Tx_Data_Single_Parameter_Write_Packet(0x7016, Loc_ref_PP.u, RS05_Manage_Object);
     CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
 }
 

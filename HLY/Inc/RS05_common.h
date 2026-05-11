@@ -23,6 +23,14 @@
 //配置滤波器中的分配过滤器的参数
 #define  FILTER_BANK 14
 
+//浮点数与无符号整数转换联合体
+typedef union
+{
+    float f;
+    uint32_t u;
+    uint8_t b[4];
+}Float_Uint_TypeDef;
+
 //RS05电机协议
 typedef enum
 {
