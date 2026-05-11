@@ -1,1 +1,18 @@
 /build/
+
+# Compiled
+*.o
+*.obj
+*.out
+*.elf
+*.hex
+*.bin
+*.map
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# IDE
+.vscode/

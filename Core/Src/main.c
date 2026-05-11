@@ -99,7 +99,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   CAN_Init(&hcan1, CAN_RS05_Call_Back);
-  CAN_Filter_Config(&hcan1, CAN_FILTER(0) | CAN_FIFO(0) | CAN_EXTID | CAN_DATA_TYPE,
+  CAN_Filter_Config(&hcan1, CAN_FILTER(0) | CAN_FIFO_0 | CAN_EXTID | CAN_DATA_TYPE,
                    0x1FFFFF7F, 0x80);
 
   /* USER CODE END 2 */
