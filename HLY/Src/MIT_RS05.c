@@ -295,6 +295,12 @@ void MIT_CAN_RS05_Call_Back(Struct_CAN_Rx_Buffer* CAN_Rx_Buffer, Motor_Manage_Ob
     //响应命令1：数据反馈电机状态
     if (ID == RS05_Manage_Object->HOST_CAN_ID)
     {
+        if (CAN_Rx_Buffer->Rx_Data[0] != RS05_Manage_Object->MOTOR_CAN_ID)
+        {
+            //如果反馈帧的电机ID与当前管理对象的电机ID不匹配，说明这条反馈帧不是针对当前管理对象的，直接丢弃
+            return;
+        }
+
         RS05_Manage_Object->Motor_CAN_ID = CAN_Rx_Buffer->Rx_Data[0];
         RS05_Manage_Object->Current_Angle = (CAN_Rx_Buffer->Rx_Data[1] << 8) | CAN_Rx_Buffer->Rx_Data[2];
         RS05_Manage_Object->Current_Omega = (CAN_Rx_Buffer->Rx_Data[3] << 4) |

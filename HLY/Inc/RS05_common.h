@@ -7,6 +7,9 @@
 
 #include "stm32f4xx_hal.h"
 
+//实际电机数量
+#define MAX_MOTOR_COUNT 1
+
 //自定义8位CAN数据包
 //滤波器编号
 #define CAN_FILTER(x) ((x) << 3)
@@ -140,6 +143,9 @@ typedef struct
 {
     CAN_HandleTypeDef *CAN_Handler;
     CAN_Call_Back CallBack_Function;
+
+    Motor_Manage_Object* Motor_List[MAX_MOTOR_COUNT];
+    uint8_t Motor_Count;
 }Struct_CAN_Manage_Object;
 
 extern Struct_CAN_Manage_Object CAN1_Manage_Object;
@@ -148,5 +154,6 @@ extern Struct_CAN_Manage_Object CAN2_Manage_Object;
 extern Motor_Manage_Object RS05_Motor_Manage_Object;
 
 void CAN_Init(CAN_HandleTypeDef* hcan,CAN_Call_Back CallBack_Function);
+void Motor_Register(Struct_CAN_Manage_Object* CAN_Manage_Object, Motor_Manage_Object* Motor_Object);
 
 #endif //RS05_RS05_COMMON_H

@@ -30,6 +30,16 @@ void CAN_Init(CAN_HandleTypeDef* hcan,CAN_Call_Back CallBack_Function)
     }
 }
 
+//电机注册
+void Motor_Register(Struct_CAN_Manage_Object* CAN_Manage_Object, Motor_Manage_Object* Motor_Object)
+{
+    if (CAN_Manage_Object->Motor_Count < MAX_MOTOR_COUNT)
+    {
+        CAN_Manage_Object->Motor_List[CAN_Manage_Object->Motor_Count] = Motor_Object;
+        CAN_Manage_Object->Motor_Count++;
+    }
+}
+
 //CAN接收FIFO0中断回调函数
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
@@ -41,7 +51,11 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
         //判空保护
         if (CAN1_Manage_Object.CallBack_Function != NULL)
         {
-            CAN1_Manage_Object.CallBack_Function(&CAN_Rx_Buffer, &RS05_Motor_Manage_Object);
+            //遍历总线上注册的所有电机
+            for (uint8_t i = 0; i < CAN1_Manage_Object.Motor_Count; i++)
+            {
+                CAN1_Manage_Object.CallBack_Function(&CAN_Rx_Buffer, CAN1_Manage_Object.Motor_List[i]);
+            }
         }
     }
     else if (hcan->Instance == CAN2)
@@ -49,7 +63,11 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
         HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &CAN_Rx_Buffer.Header, CAN_Rx_Buffer.Rx_Data);
         if (CAN2_Manage_Object.CallBack_Function != NULL)
         {
-            CAN2_Manage_Object.CallBack_Function(&CAN_Rx_Buffer, &RS05_Motor_Manage_Object);
+            //遍历总线上注册的所有电机
+            for (uint8_t i = 0; i < CAN2_Manage_Object.Motor_Count; i++)
+            {
+                CAN2_Manage_Object.CallBack_Function(&CAN_Rx_Buffer, CAN2_Manage_Object.Motor_List[i]);
+            }
         }
     }
 }
@@ -64,7 +82,11 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan)
         HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &CAN_Rx_Buffer.Header, CAN_Rx_Buffer.Rx_Data);
         if (CAN1_Manage_Object.CallBack_Function != NULL)
         {
-            CAN1_Manage_Object.CallBack_Function(&CAN_Rx_Buffer, &RS05_Motor_Manage_Object);
+            //遍历总线上注册的所有电机
+            for (uint8_t i = 0; i < CAN1_Manage_Object.Motor_Count; i++)
+            {
+                CAN1_Manage_Object.CallBack_Function(&CAN_Rx_Buffer, CAN1_Manage_Object.Motor_List[i]);
+            }
         }
     }
     else if (hcan->Instance == CAN2)
@@ -72,7 +94,12 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan)
         HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &CAN_Rx_Buffer.Header, CAN_Rx_Buffer.Rx_Data);
         if (CAN2_Manage_Object.CallBack_Function != NULL)
         {
-            CAN2_Manage_Object.CallBack_Function(&CAN_Rx_Buffer, &RS05_Motor_Manage_Object);
+            //遍历总线上注册的所有电机
+            for (uint8_t i = 0; i < CAN2_Manage_Object.Motor_Count; i++)
+            {
+                CAN2_Manage_Object.CallBack_Function(&CAN_Rx_Buffer, CAN2_Manage_Object.Motor_List[i]);
+            }
         }
     }
 }
+
