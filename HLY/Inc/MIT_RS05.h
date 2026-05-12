@@ -7,6 +7,7 @@
 
 #include "stm32f4xx_hal.h"
 #include "RS05_common.h"
+#include "drv_math.h"
 
 #define PI 3.14159265358979323846f
 

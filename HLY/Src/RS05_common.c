@@ -22,11 +22,13 @@ void CAN_Init(CAN_HandleTypeDef* hcan,CAN_Call_Back CallBack_Function)
     {
         CAN1_Manage_Object.CAN_Handler = hcan;
         CAN1_Manage_Object.CallBack_Function = CallBack_Function;
+        CAN1_Manage_Object.Motor_Count = 0;
     }
     else if (hcan->Instance == CAN2)
     {
         CAN2_Manage_Object.CAN_Handler = hcan;
         CAN2_Manage_Object.CallBack_Function = CallBack_Function;
+        CAN2_Manage_Object.Motor_Count = 0;
     }
 }
 

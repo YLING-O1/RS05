@@ -39,6 +39,8 @@ add_executable(${CMAKE_PROJECT_NAME}
         HLY/Src/MIT_RS05.c
         HLY/Inc/RS05_common.h
         HLY/Src/RS05_common.c
+        HLY/Inc/drv_math.h
+        HLY/Src/drv_math.c
 )
 
 # Add STM32CubeMX generated sources
@@ -54,6 +56,8 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
         HLY/Src/drv_RS05.c
         HLY/Src/MIT_RS05.c
+        HLY/Src/RS05_common.c
+        HLY/Src/drv_math.c
 )
 
 # Add include paths

@@ -22,20 +22,20 @@ void CAN_Tx_Data_Get_Device_ID_Packet(Motor_Manage_Object *RS05_Manage_Object)
 void CAN_Tx_Data_Operation_Control_Packet(float Target_Angle, float Target_Omega, float Send_Kp, float Send_Kd,
                                           Motor_Manage_Object *RS05_Manage_Object)
 {
-    Float_Uint_TypeDef angle_uint  = {.f = Target_Angle};
-    Float_Uint_TypeDef omega_uint  = {.f = Target_Omega};
-    Float_Uint_TypeDef kp_uint     = {.f = Send_Kp};
-    Float_Uint_TypeDef kd_uint     = {.f = Send_Kd};
+    uint16_t angle_uint  = float_to_uint16 (Target_Angle, -4 * PI, 4 * PI, 16);
+    uint16_t omega_uint  = float_to_uint16 (Target_Omega, -50.0, 50.0, 16);
+    uint16_t kp_uint     = float_to_uint16 ( Send_Kp, 0.0, 500.0, 16);
+    uint16_t kd_uint     = float_to_uint16 ( Send_Kd, 0.0, 5.0, 16);
 
     //大端模式
-    RS05_Manage_Object->CAN_Tx_Data[0] = (angle_uint.u & 0xFF00) >> 8;
-    RS05_Manage_Object->CAN_Tx_Data[1] = angle_uint.u & 0xFF;
-    RS05_Manage_Object->CAN_Tx_Data[2] = (omega_uint.u & 0xFF00) >> 8;
-    RS05_Manage_Object->CAN_Tx_Data[3] = omega_uint.u & 0xFF;
-    RS05_Manage_Object->CAN_Tx_Data[4] = (kp_uint.u & 0xFF00) >> 8;
-    RS05_Manage_Object->CAN_Tx_Data[5] = kp_uint.u & 0xFF;
-    RS05_Manage_Object->CAN_Tx_Data[6] = (kd_uint.u & 0xFF00) >> 8;
-    RS05_Manage_Object->CAN_Tx_Data[7] = kd_uint.u & 0xFF;
+    RS05_Manage_Object->CAN_Tx_Data[0] = (angle_uint & 0xFF00) >> 8;
+    RS05_Manage_Object->CAN_Tx_Data[1] = angle_uint & 0xFF;
+    RS05_Manage_Object->CAN_Tx_Data[2] = (omega_uint & 0xFF00) >> 8;
+    RS05_Manage_Object->CAN_Tx_Data[3] = omega_uint & 0xFF;
+    RS05_Manage_Object->CAN_Tx_Data[4] = (kp_uint & 0xFF00) >> 8;
+    RS05_Manage_Object->CAN_Tx_Data[5] = kp_uint & 0xFF;
+    RS05_Manage_Object->CAN_Tx_Data[6] = (kd_uint & 0xFF00) >> 8;
+    RS05_Manage_Object->CAN_Tx_Data[7] = kd_uint & 0xFF;
 }
 
 //通信类型3：电机使能运行的8字节数据包打包
@@ -423,8 +423,8 @@ void Operation_Control_Mode(CAN_HandleTypeDef *hcan, float Target_Torque, float 
     CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
 
     //发送运控模式电机控制指令（通信类型 1）
-    Float_Uint_TypeDef Torque = {.f = Target_Torque};
-    ID = Operation_Control_ID((uint16_t)Torque.u, RS05_Manage_Object);
+    uint16_t Torque = float_to_uint16 (Target_Torque, -5.5f, 5.5f, 16);
+    ID = Operation_Control_ID(Torque, RS05_Manage_Object);
     CAN_Tx_Data_Operation_Control_Packet(Target_Angle, Target_Omega, Send_Kp, Send_Kd, RS05_Manage_Object);
     CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
 

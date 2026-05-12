@@ -36,21 +36,21 @@ void MIT_CAN_Tx_Data_MIT_Dynamic_Parameters_Packet(float Target_Angle, float Tar
                                                float Send_Kp, float Send_Kd, float Target_Torque,
                                                Motor_Manage_Object *RS05_Manage_Object)
 {
-    Float_Uint_TypeDef angle_uint  = {.f = Target_Angle};
-    Float_Uint_TypeDef omega_uint  = {.f = Target_Omega};
-    Float_Uint_TypeDef kp_uint     = {.f = Send_Kp};
-    Float_Uint_TypeDef kd_uint     = {.f = Send_Kd};
-    Float_Uint_TypeDef torque_uint = {.f = Target_Torque};
+    uint16_t angle_uint  = float_to_uint16 (Target_Angle, -4 * PI, 4 * PI, 12);
+    uint16_t omega_uint  = float_to_uint16 (Target_Omega, -50.0f, 50.0f, 12);
+    uint16_t kp_uint     = float_to_uint16 ( Send_Kp, 0.0f, 500.0f, 12);
+    uint16_t kd_uint     = float_to_uint16 ( Send_Kd, 0.0f, 100.0f, 12);
+    uint16_t torque_uint = float_to_uint16 (Target_Torque, -5.5f, 5.5f, 12);
 
     //大端模式
-    RS05_Manage_Object->CAN_Tx_Data[0] = (angle_uint.u & 0xFF00) >> 8;
-    RS05_Manage_Object->CAN_Tx_Data[1] = angle_uint.u & 0xFF;
-    RS05_Manage_Object->CAN_Tx_Data[2] = (omega_uint.u & 0xFF0) >> 4;
-    RS05_Manage_Object->CAN_Tx_Data[3] = ((omega_uint.u & 0xF) << 4) | ((kp_uint.u & 0xF00) >> 8);
-    RS05_Manage_Object->CAN_Tx_Data[4] = kp_uint.u & 0xFF;
-    RS05_Manage_Object->CAN_Tx_Data[5] = (kd_uint.u & 0xFF0) >> 4;
-    RS05_Manage_Object->CAN_Tx_Data[6] = ((kd_uint.u & 0xF) << 4) | ((torque_uint.u & 0xF00) >> 8);
-    RS05_Manage_Object->CAN_Tx_Data[7] = torque_uint.u & 0xFF;
+    RS05_Manage_Object->CAN_Tx_Data[0] = (angle_uint & 0xFF00) >> 8;
+    RS05_Manage_Object->CAN_Tx_Data[1] = angle_uint & 0xFF;
+    RS05_Manage_Object->CAN_Tx_Data[2] = (omega_uint & 0xFF0) >> 4;
+    RS05_Manage_Object->CAN_Tx_Data[3] = ((omega_uint & 0xF) << 4) | ((kp_uint & 0xF00) >> 8);
+    RS05_Manage_Object->CAN_Tx_Data[4] = kp_uint & 0xFF;
+    RS05_Manage_Object->CAN_Tx_Data[5] = (kd_uint & 0xFF0) >> 4;
+    RS05_Manage_Object->CAN_Tx_Data[6] = ((kd_uint & 0xF) << 4) | ((torque_uint & 0xF00) >> 8);
+    RS05_Manage_Object->CAN_Tx_Data[7] = torque_uint & 0xFF;
 }
 
 //命令4：设置零点（非位置模式）的8位数据包打包
