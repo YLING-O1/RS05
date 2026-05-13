@@ -294,8 +294,8 @@ uint8_t CAN_Send_Data(CAN_HandleTypeDef* hcan, uint32_t CAN_ID, uint8_t *Data, u
     CAN_TxHeaderTypeDef tx_header;
     tx_header.StdId = 0;
     tx_header.ExtId = CAN_ID;
-    tx_header.IDE = 1;
-    tx_header.RTR = 0;
+    tx_header.IDE = CAN_ID_EXT;
+    tx_header.RTR = CAN_RTR_DATA;
     tx_header.DLC = Length;
     tx_header.TransmitGlobalTime = DISABLE;
 

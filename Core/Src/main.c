@@ -98,9 +98,9 @@ int main(void)
   MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
 
-  CAN_Init(&hcan1, CAN_RS05_Call_Back);
   CAN_Filter_Config(&hcan1, CAN_FILTER(0) | CAN_FIFO_0 | CAN_EXTID | CAN_DATA_TYPE,
-                   0x1FFFFF7F, 0x80);
+                   0x0, 0x0);
+  CAN_Init(&hcan1, CAN_RS05_Call_Back);
 
   Motor_Register(&CAN1_Manage_Object, &RS05_1);
 
@@ -112,7 +112,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    Operation_Control_Mode(&hcan1, 0.0, 0.0, 1.0, 0.0, 1.0,
+    Operation_Control_Mode(&hcan1, 0.5, 0.0, 20.0, 0.0, 1.0,
                            &RS05_1);
 
     /* USER CODE END WHILE */
