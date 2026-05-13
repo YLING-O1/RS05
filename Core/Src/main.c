@@ -49,7 +49,7 @@
 
 /* USER CODE BEGIN PV */
 
-Motor_Manage_Object RS05_0 = {.MOTOR_CAN_ID = 0x02, .HOST_CAN_ID = 0xFD};
+Motor_Manage_Object RS05_1 = {.MOTOR_CAN_ID = 0x02, .HOST_CAN_ID = 0xFD};
 
 /* USER CODE END PV */
 
@@ -102,8 +102,9 @@ int main(void)
   CAN_Filter_Config(&hcan1, CAN_FILTER(0) | CAN_FIFO_0 | CAN_EXTID | CAN_DATA_TYPE,
                    0x1FFFFF7F, 0x80);
 
-  Motor_Register(&CAN1_Manage_Object, &RS05_0);
+  Motor_Register(&CAN1_Manage_Object, &RS05_1);
 
+  RS05_Motor_Enable(&hcan1, &RS05_1);
 
   /* USER CODE END 2 */
 
@@ -111,8 +112,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    Operation_Control_Mode(&hcan1, 0.0f, 0.0f, 1.0f,
-                          0.0f, 1.0f, &RS05_0);
+    Operation_Control_Mode(&hcan1, 0.0, 0.0, 1.0, 0.0, 1.0,
+                           &RS05_1);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

@@ -42,13 +42,24 @@ uint16_t MIT_Motor_Parameter_Write_Calculate_ID(Motor_Manage_Object *RS05_Manage
 uint8_t MIT_CAN_Send_Data(CAN_HandleTypeDef* hcan, uint16_t CAN_ID, uint8_t *Data, uint16_t Length);
 void MIT_CAN_RS05_Call_Back(Struct_CAN_Rx_Buffer* CAN_Rx_Buffer, Motor_Manage_Object* MIT_RS05_Manage_Object);
 
+// void MIT_Motion_Control_Mode(CAN_HandleTypeDef* hcan, float Target_Angle, float Target_Omega,
+//                              float Send_Kp, float Send_Kd, float Target_Torque,
+//                              Motor_Manage_Object* RS05_Manage_Object);
+// void MIT_Velocity_Mode(CAN_HandleTypeDef* hcan, float Target_Speed, float Current_Limit,
+//                        Motor_Manage_Object* RS05_Manage_Object);
+// void MIT_Position_Mode_CSP(CAN_HandleTypeDef* hcan, float Target_Position, float Target_Speed,
+//                            Motor_Manage_Object* RS05_Manage_Object);
+// void MIT_Stop_Mode(CAN_HandleTypeDef* hcan, Motor_Manage_Object* RS05_Manage_Object);
+
+void MIT_RS05_Enable(CAN_HandleTypeDef* hcan, Motor_Manage_Object* RS05_Manage_Object);
 void MIT_Motion_Control_Mode(CAN_HandleTypeDef* hcan, float Target_Angle, float Target_Omega,
                              float Send_Kp, float Send_Kd, float Target_Torque,
                              Motor_Manage_Object* RS05_Manage_Object);
-void MIT_Velocity_Mode(CAN_HandleTypeDef* hcan, float Target_Speed, float Current_Limit,
+void MIT_Stop(CAN_HandleTypeDef* hcan, Motor_Manage_Object* RS05_Manage_Object);
+void MIT_Set_Mode(CAN_HandleTypeDef* hcan, uint8_t mode, Motor_Manage_Object* RS05_Manage_Object);
+void MIT_Speed_Mode(CAN_HandleTypeDef* hcan, float Target_Speed, float Current_Limit,
+                    Motor_Manage_Object* RS05_Manage_Object);
+void MIT_Position_Mode(CAN_HandleTypeDef* hcan, float Target_Position, float Target_Speed,
                        Motor_Manage_Object* RS05_Manage_Object);
-void MIT_Position_Mode_CSP(CAN_HandleTypeDef* hcan, float Target_Position, float Target_Speed,
-                           Motor_Manage_Object* RS05_Manage_Object);
-void MIT_Stop_Mode(CAN_HandleTypeDef* hcan, Motor_Manage_Object* RS05_Manage_Object);
 
 #endif //RS05_MIT_RS05_H

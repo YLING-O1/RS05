@@ -8,9 +8,6 @@
 Struct_CAN_Manage_Object CAN1_Manage_Object;
 Struct_CAN_Manage_Object CAN2_Manage_Object;
 
-//RS05电机信息结构体
-Motor_Manage_Object RS05_Motor_Manage_Object;
-
 //初始化CAN总线——————————————————————————————————————————————————————————————————————————————————————————————————————————
 void CAN_Init(CAN_HandleTypeDef* hcan,CAN_Call_Back CallBack_Function)
 {

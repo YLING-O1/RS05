@@ -331,79 +331,132 @@ void MIT_CAN_RS05_Call_Back(Struct_CAN_Rx_Buffer* CAN_Rx_Buffer, Motor_Manage_Ob
     }
 }
 
-//MIT控制模式———————————————————————————————————————————————————————————————————————————————————————————————————————————
-//运控模式
+// //MIT控制模式———————————————————————————————————————————————————————————————————————————————————————————————————————————
+// //运控模式
+// void MIT_Motion_Control_Mode(CAN_HandleTypeDef* hcan, float Target_Angle, float Target_Omega,
+//                              float Send_Kp, float Send_Kd, float Target_Torque,
+//                              Motor_Manage_Object* RS05_Manage_Object)
+// {
+//     //发送电机使能指令（指令 1）
+//     uint16_t ID = RS05_Manage_Object->MOTOR_CAN_ID;
+//     MIT_CAN_Tx_Data_Enable_Motor_Operation_Packet(RS05_Manage_Object);
+//     MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
+//
+//     //发送运控指令（指令 3）以激活动态参数控制
+//
+//     MIT_CAN_Tx_Data_MIT_Dynamic_Parameters_Packet(Target_Angle, Target_Omega, Send_Kp, Send_Kd, Target_Torque,
+//                                                   RS05_Manage_Object);
+//     MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
+//
+//     //在需要时，发送电机停止指令（指令 2）以停止运行
+//     //MIT_CAN_Tx_Data_Stop_Motor_Operation_Packet(RS05_Manage_Object);
+//     //MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
+// }
+//
+// //速度模式
+// void MIT_Velocity_Mode(CAN_HandleTypeDef* hcan, float Target_Speed, float Current_Limit,
+//                        Motor_Manage_Object* RS05_Manage_Object)
+// {
+//     //发送“设置运行模式指令”（指令 6）并设定模式 = 2（速度模式），来配置电机的运行模式
+//     uint16_t ID = RS05_Manage_Object->MOTOR_CAN_ID;
+//     MIT_CAN_Tx_Data_Set_Operation_Mode_Packet(0x02, RS05_Manage_Object);
+//     MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
+//
+//     //发送“电机使能指令”（指令 1）来激活电机
+//     MIT_CAN_Tx_Data_Enable_Motor_Operation_Packet(RS05_Manage_Object);
+//     MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
+//
+//     //发送“速度模式控制指令”（指令 11）来设置最大电流（绝对值）和目标速度
+//     ID = MIT_Velocity_Mode_Calculate_ID(RS05_Manage_Object);
+//     MIT_CAN_Tx_Data_Velocity_Mode_Control_Packet(Target_Speed, Current_Limit, RS05_Manage_Object);
+//     MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
+//
+//     //如需停止，发送“电机停止指令”（指令 2）
+//     //MIT_CAN_Tx_Data_Stop_Motor_Operation_Packet(RS05_Manage_Object);
+//     //MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
+// }
+//
+// //位置模式（CSP-循环同步位置）
+// void MIT_Position_Mode_CSP(CAN_HandleTypeDef* hcan, float Target_Position, float Target_Speed,
+//                            Motor_Manage_Object* RS05_Manage_Object)
+// {
+//     //发送“设置运行模式指令”（指令 6）并设定模式 = 1（位置模式），来配置电机的运行模式
+//     uint16_t ID = RS05_Manage_Object->MOTOR_CAN_ID;
+//     MIT_CAN_Tx_Data_Set_Operation_Mode_Packet(0x01, RS05_Manage_Object);
+//     MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
+//
+//     //发送“电机使能指令”（指令 1）来激活电机
+//     MIT_CAN_Tx_Data_Enable_Motor_Operation_Packet(RS05_Manage_Object);
+//     MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
+//
+//     //发送“位置模式控制指令”（指令 10）来设置最大速度（绝对值）和目标位置
+//     ID = MIT_Position_Mode_Calculate_ID(RS05_Manage_Object);
+//     MIT_CAN_Tx_Data_Position_Mode_Control_Packet(Target_Position, Target_Speed, RS05_Manage_Object);
+//     MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
+//
+//     //如需停止，发送“电机停止指令”（指令 2）
+//     //MIT_CAN_Tx_Data_Stop_Motor_Operation_Packet(RS05_Manage_Object);
+//     //MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
+// }
+//
+// //停止运行模式
+// void MIT_Stop_Mode(CAN_HandleTypeDef* hcan, Motor_Manage_Object* RS05_Manage_Object)
+// {
+//     //发送电机停止指令（指令 2）以停止运行
+//     uint16_t ID = RS05_Manage_Object->MOTOR_CAN_ID;
+//     MIT_CAN_Tx_Data_Stop_Motor_Operation_Packet(RS05_Manage_Object);
+//     MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
+// }
+
+//MIT模式电机使能,发送“电机使能指令”（指令 1）来激活电机
+void MIT_RS05_Enable(CAN_HandleTypeDef* hcan, Motor_Manage_Object* RS05_Manage_Object)
+{
+    uint16_t ID = RS05_Manage_Object->MOTOR_CAN_ID;
+    MIT_CAN_Tx_Data_Enable_Motor_Operation_Packet(RS05_Manage_Object);
+    MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
+}
+
+//发送运控指令（指令 3）以激活动态参数控制
 void MIT_Motion_Control_Mode(CAN_HandleTypeDef* hcan, float Target_Angle, float Target_Omega,
                              float Send_Kp, float Send_Kd, float Target_Torque,
                              Motor_Manage_Object* RS05_Manage_Object)
 {
-    //发送电机使能指令（指令 1）
     uint16_t ID = RS05_Manage_Object->MOTOR_CAN_ID;
-    MIT_CAN_Tx_Data_Enable_Motor_Operation_Packet(RS05_Manage_Object);
-    MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
-
-    //发送运控指令（指令 3）以激活动态参数控制
-
     MIT_CAN_Tx_Data_MIT_Dynamic_Parameters_Packet(Target_Angle, Target_Omega, Send_Kp, Send_Kd, Target_Torque,
                                                   RS05_Manage_Object);
     MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
-
-    //在需要时，发送电机停止指令（指令 2）以停止运行
-    //MIT_CAN_Tx_Data_Stop_Motor_Operation_Packet(RS05_Manage_Object);
-    //MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
 }
 
-//速度模式
-void MIT_Velocity_Mode(CAN_HandleTypeDef* hcan, float Target_Speed, float Current_Limit,
-                       Motor_Manage_Object* RS05_Manage_Object)
+//发送“电机停止指令”（指令 2）以停止运行
+void MIT_Stop(CAN_HandleTypeDef* hcan, Motor_Manage_Object* RS05_Manage_Object)
 {
-    //发送“设置运行模式指令”（指令 6）并设定模式 = 2（速度模式），来配置电机的运行模式
-    uint16_t ID = RS05_Manage_Object->MOTOR_CAN_ID;
-    MIT_CAN_Tx_Data_Set_Operation_Mode_Packet(0x02, RS05_Manage_Object);
-    MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
-
-    //发送“电机使能指令”（指令 1）来激活电机
-    MIT_CAN_Tx_Data_Enable_Motor_Operation_Packet(RS05_Manage_Object);
-    MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
-
-    //发送“速度模式控制指令”（指令 11）来设置最大电流（绝对值）和目标速度
-    ID = MIT_Velocity_Mode_Calculate_ID(RS05_Manage_Object);
-    MIT_CAN_Tx_Data_Velocity_Mode_Control_Packet(Target_Speed, Current_Limit, RS05_Manage_Object);
-    MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
-
-    //如需停止，发送“电机停止指令”（指令 2）
-    //MIT_CAN_Tx_Data_Stop_Motor_Operation_Packet(RS05_Manage_Object);
-    //MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
-}
-
-//位置模式（CSP-循环同步位置）
-void MIT_Position_Mode_CSP(CAN_HandleTypeDef* hcan, float Target_Position, float Target_Speed,
-                           Motor_Manage_Object* RS05_Manage_Object)
-{
-    //发送“设置运行模式指令”（指令 6）并设定模式 = 1（位置模式），来配置电机的运行模式
-    uint16_t ID = RS05_Manage_Object->MOTOR_CAN_ID;
-    MIT_CAN_Tx_Data_Set_Operation_Mode_Packet(0x01, RS05_Manage_Object);
-    MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
-
-    //发送“电机使能指令”（指令 1）来激活电机
-    MIT_CAN_Tx_Data_Enable_Motor_Operation_Packet(RS05_Manage_Object);
-    MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
-
-    //发送“位置模式控制指令”（指令 10）来设置最大速度（绝对值）和目标位置
-    ID = MIT_Position_Mode_Calculate_ID(RS05_Manage_Object);
-    MIT_CAN_Tx_Data_Position_Mode_Control_Packet(Target_Position, Target_Speed, RS05_Manage_Object);
-    MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
-
-    //如需停止，发送“电机停止指令”（指令 2）
-    //MIT_CAN_Tx_Data_Stop_Motor_Operation_Packet(RS05_Manage_Object);
-    //MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
-}
-
-//停止运行模式
-void MIT_Stop_Mode(CAN_HandleTypeDef* hcan, Motor_Manage_Object* RS05_Manage_Object)
-{
-    //发送电机停止指令（指令 2）以停止运行
     uint16_t ID = RS05_Manage_Object->MOTOR_CAN_ID;
     MIT_CAN_Tx_Data_Stop_Motor_Operation_Packet(RS05_Manage_Object);
+    MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
+}
+
+//发送“设置运行模式指令”（指令 6）并设定模式，来配置电机的运行模式
+void MIT_Set_Mode(CAN_HandleTypeDef* hcan, uint8_t mode, Motor_Manage_Object* RS05_Manage_Object)
+{
+    uint16_t ID = RS05_Manage_Object->MOTOR_CAN_ID;
+    MIT_CAN_Tx_Data_Set_Operation_Mode_Packet(mode, RS05_Manage_Object);
+    MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
+}
+
+//发送“速度模式控制指令”（指令 11）来设置最大电流（绝对值）和目标速度
+void MIT_Speed_Mode(CAN_HandleTypeDef* hcan, float Target_Speed, float Current_Limit,
+                    Motor_Manage_Object* RS05_Manage_Object)
+{
+    uint16_t ID = MIT_Velocity_Mode_Calculate_ID(RS05_Manage_Object);
+    MIT_CAN_Tx_Data_Velocity_Mode_Control_Packet(Target_Speed, Current_Limit, RS05_Manage_Object);
+    MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
+}
+
+//发送“位置模式控制指令”（指令 10）来设置最大速度（绝对值）和目标位置
+void MIT_Position_Mode(CAN_HandleTypeDef* hcan, float Target_Position, float Target_Speed,
+                       Motor_Manage_Object* RS05_Manage_Object)
+{
+    uint16_t ID = MIT_Position_Mode_Calculate_ID(RS05_Manage_Object);
+    MIT_CAN_Tx_Data_Position_Mode_Control_Packet(Target_Position, Target_Speed, RS05_Manage_Object);
     MIT_CAN_Send_Data(hcan, ID, RS05_Manage_Object->CAN_Tx_Data, 8);
 }

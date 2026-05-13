@@ -62,16 +62,19 @@ uint8_t CAN_Send_Data(CAN_HandleTypeDef* hcan, uint32_t CAN_ID, uint8_t *Data, u
 
 void CAN_RS05_Call_Back(Struct_CAN_Rx_Buffer* CAN_Rx_Buffer, Motor_Manage_Object* RS05_Manage_Object);
 
+void RS05_Motor_Enable(CAN_HandleTypeDef *hcan, Motor_Manage_Object* RS05_Manage_Object);
 void Operation_Control_Mode(CAN_HandleTypeDef *hcan, float Target_Torque, float Target_Angle,
                             float Target_Omega, float Send_Kp, float Send_Kd,
                             Motor_Manage_Object* RS05_Manage_Object);
-void Current_Mode(CAN_HandleTypeDef *hcan, float iq_ref, Motor_Manage_Object* RS05_Manage_Object);
-void Velocity_Mode(CAN_HandleTypeDef *hcan, float limit_cur, float acc_rad, float spd_ref,
-                   Motor_Manage_Object* RS05_Manage_Object);
-void Location_Mode_CSP(CAN_HandleTypeDef *hcan, float limit_spd, float loc_ref,
-                       Motor_Manage_Object* RS05_Manage_Object);
-void Location_Mode_PP(CAN_HandleTypeDef *hcan, float vel_max, float acc_set, float loc_ref,
-                      Motor_Manage_Object* RS05_Manage_Object);
-void  Stop_Running_Mode(CAN_HandleTypeDef *hcan, Motor_Manage_Object* RS05_Manage_Object);
+void Set_Mode(CAN_HandleTypeDef *hcan, uint8_t runmode, Motor_Manage_Object* RS05_Manage_Object);
+void Set_iq_ref(CAN_HandleTypeDef *hcan, float iq_ref, Motor_Manage_Object* RS05_Manage_Object);
+void Set_limit_cur(CAN_HandleTypeDef *hcan, float limit_cur, Motor_Manage_Object* RS05_Manage_Object);
+void Set_acc_rad(CAN_HandleTypeDef *hcan, float acc_rad, Motor_Manage_Object* RS05_Manage_Object);
+void Set_spd_ref(CAN_HandleTypeDef *hcan, float spd_ref, Motor_Manage_Object* RS05_Manage_Object);
+void Set_limit_spd(CAN_HandleTypeDef *hcan, float limit_spd, Motor_Manage_Object* RS05_Manage_Object);
+void Set_loc_ref(CAN_HandleTypeDef *hcan, float loc_ref, Motor_Manage_Object* RS05_Manage_Object);
+void Set_vel_max(CAN_HandleTypeDef *hcan, float vel_max, Motor_Manage_Object* RS05_Manage_Object);
+void Set_acc_set(CAN_HandleTypeDef *hcan, float acc_set, Motor_Manage_Object* RS05_Manage_Object);
+void RS05_Motor_Stop(CAN_HandleTypeDef *hcan, Motor_Manage_Object* RS05_Manage_Object);
 
 #endif //RS05_DRV_RS05_H

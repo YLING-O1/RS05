@@ -151,8 +151,6 @@ typedef struct
 extern Struct_CAN_Manage_Object CAN1_Manage_Object;
 extern Struct_CAN_Manage_Object CAN2_Manage_Object;
 
-extern Motor_Manage_Object RS05_Motor_Manage_Object;
-
 void CAN_Init(CAN_HandleTypeDef* hcan,CAN_Call_Back CallBack_Function);
 void Motor_Register(Struct_CAN_Manage_Object* CAN_Manage_Object, Motor_Manage_Object* Motor_Object);
 
