@@ -29,7 +29,7 @@ void CAN_Init(CAN_HandleTypeDef* hcan,CAN_Call_Back CallBack_Function)
     }
 }
 
-//电机注册
+//电机注册，一次注册一个电机
 void Motor_Register(Struct_CAN_Manage_Object* CAN_Manage_Object, Motor_Manage_Object* Motor_Object)
 {
     if (CAN_Manage_Object->Motor_Count < MAX_MOTOR_COUNT)

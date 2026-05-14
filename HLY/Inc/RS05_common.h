@@ -144,7 +144,9 @@ typedef struct
     CAN_HandleTypeDef *CAN_Handler;
     CAN_Call_Back CallBack_Function;
 
+    //存放着挂载在这条 CAN 总线上的所有电机的信息
     Motor_Manage_Object* Motor_List[MAX_MOTOR_COUNT];
+    //已经注册的电机数量
     uint8_t Motor_Count;
 }Struct_CAN_Manage_Object;
 
